@@ -10,9 +10,21 @@ from .models import UserProfile
 from .serializers import UserProfileSerializer, UserRegistrationSerializer, UserLoginSerializer
 
 
-class UserProfileViewSet(viewsets.ModelViewSet):
+class AllUserProfileViewSet(viewsets.ModelViewSet):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
+
+
+class UserProfileViewSet(APIView):
+    def get(self, request, user_id):
+        try:
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found!'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user_profile = UserProfile.objects.get(user=user)
+        serializer = UserProfileSerializer(user_profile)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class UserRegistrationViewSet(APIView):
@@ -38,7 +50,7 @@ class UserLoginViewSet(APIView):
                 return Response({'error': 'User not found!'}, status=status.HTTP_400_BAD_REQUEST)
 
             if not user.is_active:
-                return Response({'warning': 'Please activate your account before login!'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'error': 'Please activate your account before login!'}, status=status.HTTP_400_BAD_REQUEST)
 
             user = authenticate(username=username, password=password)
 
@@ -46,9 +58,9 @@ class UserLoginViewSet(APIView):
                 login(request, user)
                 refresh = RefreshToken.for_user(user)
                 access = AccessToken.for_user(user)
-                return Response({'refresh': str(refresh), 'access': str(access)}, status=status.HTTP_200_OK)
+                return Response({'refresh': str(refresh), 'access': str(access), 'user_id': user.id}, status=status.HTTP_200_OK)
             else:
-                return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'error': 'Invalid credentials! Try Again.'}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
