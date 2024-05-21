@@ -126,8 +126,7 @@ db_pass = env('DB_PASS')
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=f"postgres://{db_user}:{
-            db_pass}@dpg-cp65ha021fec738bkk80-a.oregon-postgres.render.com/finance_tracking_db",
+        default=f"postgres://{db_user}:{db_pass}@dpg-cp65ha021fec738bkk80-a.oregon-postgres.render.com/finance_tracking_db",
     )
 }
 
