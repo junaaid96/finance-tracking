@@ -4,7 +4,7 @@ from .models import Transaction
 from .serializers import TransactionSerializer
 
 
-class TransactionViewSet(ModelViewSet):
+class TransactionHistoryViewSet(ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = TransactionSerializer
 

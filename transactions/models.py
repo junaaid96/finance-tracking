@@ -1,11 +1,12 @@
 from django.db import models
 from users.models import UserProfile
 
+
 class Transaction(models.Model):
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    type = models.CharField(max_length=10)
+    type = models.CharField(max_length=20)
+    description = models.TextField(max_length=200, blank=True, null=True)
     date = models.DateField(auto_now_add=True)
 
     def __str__(self):
-        return f'{self.amount} - {self.type}'
+        return f'{self.type} - {self.description}'

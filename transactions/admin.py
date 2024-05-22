@@ -3,12 +3,10 @@ from .models import Transaction
 
 
 class TransactionAdmin(admin.ModelAdmin):
-    def current_balance(self, obj):
-        return obj.user.available_balance
-
-    list_display = ('user', 'amount', 'type', 'date', 'current_balance')
-    list_filter = ('user', 'type', 'date')
-    search_fields = ('user', 'type', 'date')
+    list_display = ('user', 'type', 'description', 'date')
+    list_filter = ('type', 'date')
+    search_fields = ('user__user__username', 'type', 'description')
+    ordering = ('-date',)
 
 
 admin.site.register(Transaction, TransactionAdmin)
