@@ -20,17 +20,18 @@ class SavingsGoalView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, pk):
+        user = UserProfile.objects.get(user=request.user)
         savings_goal = SavingsGoal.objects.get(pk=pk)
+
+        if savings_goal.user != user:
+            return Response({'message': 'You are not authorized to view this savings goal!'}, status=status.HTTP_403_FORBIDDEN)
+
         serializer = SavingsGoalSerializer(savings_goal)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class SavingsGoalCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
-
-    # def get(self, request):
-    #     user = UserProfile.objects.get(user=request.user)
-    #     return Response({'user': user.user.first_name + " "+user.user.last_name, 'available_balance': user.available_balance}, status=status.HTTP_200_OK)
 
     def post(self, request):
         user = UserProfile.objects.get(user=request.user)
@@ -50,6 +51,10 @@ class SavingsGoalUpdateView(APIView):
     def put(self, request, pk):
         user = UserProfile.objects.get(user=request.user)
         savings_goal = SavingsGoal.objects.get(pk=pk)
+
+        if savings_goal.user != user:
+            return Response({'message': 'You are not authorized to update this savings goal!'}, status=status.HTTP_403_FORBIDDEN)
+
         serializer = SavingsGoalCreateSerializer(
             savings_goal, data=request.data)
         if serializer.is_valid():
@@ -63,6 +68,11 @@ class SavingsGoalDeleteView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def delete(self, request, pk):
+        user = UserProfile.objects.get(user=request.user)
         savings_goal = SavingsGoal.objects.get(pk=pk)
+
+        if savings_goal.user != user:
+            return Response({'message': 'You are not authorized to delete this savings goal!'}, status=status.HTTP_403_FORBIDDEN)
+
         savings_goal.delete()
         return Response({'message': 'Savings goal deleted!'}, status=status.HTTP_200_OK)

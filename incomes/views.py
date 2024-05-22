@@ -21,7 +21,12 @@ class IncomeView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, pk):
+        user = UserProfile.objects.get(user=request.user)
         income = Income.objects.get(pk=pk)
+
+        if income.user != user:
+            return Response({'message': 'You are not authorized to view this income!'}, status=status.HTTP_403_FORBIDDEN)
+
         serializer = IncomeSerializer(income)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -56,6 +61,10 @@ class IncomeUpdateView(APIView):
     def put(self, request, pk):
         user = UserProfile.objects.get(user=request.user)
         income = Income.objects.get(pk=pk)
+
+        if income.user != user:
+            return Response({'message': 'You are not authorized to update this income!'}, status=status.HTTP_403_FORBIDDEN)
+
         serializer = IncomeCreateSerializer(income, data=request.data)
         if serializer.is_valid():
             amount = serializer.validated_data['amount']
@@ -78,6 +87,10 @@ class IncomeDeleteView(APIView):
     def delete(self, request, pk):
         user = UserProfile.objects.get(user=request.user)
         income = Income.objects.get(pk=pk)
+
+        if income.user != user:
+            return Response({'message': 'You are not authorized to delete this income!'}, status=status.HTTP_403_FORBIDDEN)
+
         user.available_balance -= income.amount
         user.save()
         income.delete()

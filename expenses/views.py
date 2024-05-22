@@ -21,7 +21,12 @@ class ExpenseView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, pk):
+        user = UserProfile.objects.get(user=request.user)
         expense = Expense.objects.get(pk=pk)
+
+        if expense.user != user:
+            return Response({'message': 'You are not authorized to view this expense!'}, status=status.HTTP_403_FORBIDDEN)
+
         serializer = ExpenseSerializer(expense)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -60,6 +65,10 @@ class ExpenseUpdateView(APIView):
     def put(self, request, pk):
         user = UserProfile.objects.get(user=request.user)
         expense = Expense.objects.get(pk=pk)
+
+        if expense.user != user:
+            return Response({'message': 'You are not authorized to update this expense!'}, status=status.HTTP_403_FORBIDDEN)
+
         serializer = ExpenseCreateSerializer(expense, data=request.data)
         if serializer.is_valid():
             amount = serializer.validated_data['amount']
@@ -85,6 +94,10 @@ class ExpenseDeleteView(APIView):
     def delete(self, request, pk):
         user = UserProfile.objects.get(user=request.user)
         expense = Expense.objects.get(pk=pk)
+
+        if expense.user != user:
+            return Response({'message': 'You are not authorized to delete this expense!'}, status=status.HTTP_403_FORBIDDEN)
+
         user.available_balance += expense.amount
         user.save()
         expense.delete()
