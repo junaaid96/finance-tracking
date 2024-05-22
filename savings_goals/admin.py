@@ -3,7 +3,8 @@ from .models import SavingsGoal
 
 
 class SavingsGoalAdmin(admin.ModelAdmin):
-    list_display = ('user', 'name', 'amount', 'current_amount', 'deadline')
+    list_display = ('id', 'user', 'name', 'amount',
+                    'current_amount', 'deadline')
     list_filter = ('user', 'deadline')
     search_fields = ('user', 'deadline')
 

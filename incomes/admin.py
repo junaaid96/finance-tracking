@@ -3,7 +3,7 @@ from .models import Income
 
 
 class IncomeAdmin(admin.ModelAdmin):
-    list_display = ('user', 'amount', 'category', 'date', 'description')
+    list_display = ('id', 'user', 'amount', 'category', 'date', 'description')
     list_filter = ('user', 'category', 'date')
     search_fields = ('user', 'category', 'date')
 
