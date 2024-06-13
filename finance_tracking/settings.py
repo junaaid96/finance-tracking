@@ -126,7 +126,7 @@ db_pass = env('DB_PASS')
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=f"postgres://{db_user}:{db_pass}@viaduct.proxy.rlwy.net:31793/railwayfinance_tracking_db",
+        default=f"postgres://{db_user}:{db_pass}@viaduct.proxy.rlwy.net:31793/railway",
     )
 }
 
